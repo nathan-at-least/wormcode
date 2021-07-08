@@ -25,7 +25,7 @@ impl<const N: usize> B<N> {
     }
 
     pub fn try_from_u32(u: u32) -> Result<Self, Overflow> {
-        let cap = 1u32 << (N - 1); // BUG: N == 0 case.
+        let cap = 1u32 << N;
         if u < cap {
             Ok(Self(u))
         } else {
