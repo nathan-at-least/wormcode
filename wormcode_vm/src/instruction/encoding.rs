@@ -49,13 +49,10 @@ impl From<OpCode2> for B<8> {
 #[derive(Debug)]
 enum OpCode3 {
     // PlaceHolders reserve spine values for non-tertiary instructions:
-    PlaceHolderData,
-    PlaceHolderNullary,
-    PlaceHolderUnary,
-    PlaceHolderBinary,
+    // Data, Nullary, Unary, Binary
 
     // Actual tertiary instruction opcodes:
-    MemCpy,
+    MemCpy = 0x4,
 }
 
 impl From<OpCode3> for B<4> {
