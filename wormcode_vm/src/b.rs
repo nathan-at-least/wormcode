@@ -27,7 +27,7 @@ impl<const N: usize> From<u32> for B<N> {
 impl<const N: usize> B<N> {
     pub fn concat<const J: usize, const K: usize>(a: B<J>, b: B<K>) -> B<N> {
         assert!(J + K == N);
-        Self::from_u32((a.0 << K) & b.0)
+        Self::from_u32((a.0 << K) | b.0)
     }
 
     pub fn try_from_b<const K: usize>(other: B<K>) -> Result<Self, Overflow> {
@@ -41,8 +41,9 @@ impl<const N: usize> B<N> {
     }
 
     fn try_from_u32(u: u32) -> Result<Self, Overflow> {
-        let cap = 1u32 << N;
-        if u < cap {
+        assert!(N <= 32);
+        let cap: u64 = 1u64 << N;
+        if (u as u64) < cap {
             Ok(Self(u))
         } else {
             Err(Overflow {

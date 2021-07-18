@@ -84,18 +84,18 @@ impl From<Encoding> for B<28> {
         match e {
             Data(d) => B::<28>::from_b(d),
             Nullary(op) => {
-                let spine = B::<4>::from(0x0);
+                let spine = B::<4>::from(0x1);
                 let opcode = B::<24>::from(op);
                 B::<28>::concat(spine, opcode)
             }
             Unary(op, a) => {
-                let spine = B::<4>::from(0x1);
+                let spine = B::<4>::from(0x2);
                 let op = B::<16>::from(op);
                 let opa = B::<8>::from(a);
                 B::<28>::concat(spine, B::<24>::concat(op, opa))
             }
             Binary(op, a, b) => {
-                let spine = B::<4>::from(0x2);
+                let spine = B::<4>::from(0x3);
                 let op = B::<8>::from(op);
                 let opa = B::<8>::from(a);
                 let opb = B::<8>::from(b);
