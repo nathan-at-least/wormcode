@@ -45,3 +45,13 @@ fn concat_2_3() {
     let b = B::<5>::from(0x16);
     assert_eq!(a, b);
 }
+
+#[test]
+fn split_2_3() {
+    let x = B::<5>::from(0x16);
+    let (a, b): (B<2>, B<3>) = x.split();
+    let au32 = u32::from(a);
+    let bu32 = u32::from(b);
+    assert_eq!(au32, 0x2);
+    assert_eq!(bu32, 0x6);
+}
