@@ -1,6 +1,9 @@
+mod tests;
+
+use crate::decode::Decode;
 use crate::B;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mode {
     Literal,
     Direct,
@@ -13,17 +16,15 @@ impl From<Mode> for B<2> {
     }
 }
 
-#[test]
-fn b2_from_literal() {
-    assert_eq!(B::<2>::from(0), B::<2>::from(Mode::Literal));
-}
+impl Decode<2> for Mode {
+    fn decode(b: B<2>) -> Option<Self> {
+        use Mode::*;
 
-#[test]
-fn b2_from_direct() {
-    assert_eq!(B::<2>::from(1), B::<2>::from(Mode::Direct));
-}
-
-#[test]
-fn b2_from_indirect() {
-    assert_eq!(B::<2>::from(2), B::<2>::from(Mode::Indirect));
+        match u32::from(b) {
+            0 => Some(Literal),
+            1 => Some(Direct),
+            2 => Some(Indirect),
+            _ => None,
+        }
+    }
 }
