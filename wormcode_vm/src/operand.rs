@@ -1,11 +1,14 @@
 mod mode;
 
+#[cfg(test)]
+mod tests;
+
 pub use self::mode::Mode;
 
 use crate::decode::Decode;
 use crate::B;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Operand {
     mode: Mode,
     scalar: B<6>,
