@@ -22,6 +22,17 @@ mod encoding_tests {
         check_encoding(0x2_00_00_8d, Step(Operand::new(Indirect, B::from(0xd))));
     }
 
+    #[test]
+    fn step_inc() {
+        check_encoding(
+            0x3_00_03_8d,
+            Inc(
+                Operand::new(Literal, B::from(0x3)),
+                Operand::new(Indirect, B::from(0xd)),
+            ),
+        );
+    }
+
     fn check_encoding(b28: u32, inst: Instruction) {
         let expected = B::<28>::from(b28);
         let actual = inst.encode();
