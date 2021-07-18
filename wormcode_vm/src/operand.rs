@@ -1,3 +1,7 @@
+mod mode;
+
+pub use self::mode::Mode;
+
 use crate::B;
 
 #[derive(Debug)]
@@ -6,15 +10,14 @@ pub struct Operand {
     scalar: B<6>,
 }
 
-#[derive(Debug)]
-pub enum Mode {
-    Literal,
-    Direct,
-    Indirect,
+impl Operand {
+    pub fn new(mode: Mode, scalar: B<6>) -> Operand {
+        Operand { mode, scalar }
+    }
 }
 
 impl From<Operand> for B<8> {
     fn from(od: Operand) -> B<8> {
-        B::<8>::from_u32(((od.mode as u32) << 6) & u32::from(od.scalar))
+        B::<8>::concat(B::<2>::from(od.mode), od.scalar)
     }
 }

@@ -1,7 +1,11 @@
 use crate::{InstG, Instruction, Operand, B};
 
+pub fn encode(inst: Instruction) -> B<28> {
+    B::<28>::from(Encoding::from(inst))
+}
+
 #[derive(Debug)]
-pub enum Encoding {
+enum Encoding {
     Data(B<24>),
     Nullary(OpCode0),
     Unary(OpCode1, Operand),
@@ -10,40 +14,40 @@ pub enum Encoding {
 }
 
 #[derive(Debug)]
-pub enum OpCode0 {
+enum OpCode0 {
     Nop,
 }
 
 impl From<OpCode0> for B<24> {
     fn from(oc: OpCode0) -> B<24> {
-        B::<24>::from_u32(oc as u32)
+        B::<24>::from(oc as u32)
     }
 }
 
 #[derive(Debug)]
-pub enum OpCode1 {
+enum OpCode1 {
     Step,
 }
 
 impl From<OpCode1> for B<16> {
     fn from(oc: OpCode1) -> B<16> {
-        B::<16>::from_u32(oc as u32)
+        B::<16>::from(oc as u32)
     }
 }
 
 #[derive(Debug)]
-pub enum OpCode2 {
+enum OpCode2 {
     Inc,
 }
 
 impl From<OpCode2> for B<8> {
     fn from(oc: OpCode2) -> B<8> {
-        B::<8>::from_u32(oc as u32)
+        B::<8>::from(oc as u32)
     }
 }
 
 #[derive(Debug)]
-pub enum OpCode3 {
+enum OpCode3 {
     // PlaceHolders reserve spine values for non-tertiary instructions:
     PlaceHolderData,
     PlaceHolderNullary,
@@ -56,7 +60,7 @@ pub enum OpCode3 {
 
 impl From<OpCode3> for B<4> {
     fn from(oc: OpCode3) -> B<4> {
-        B::<4>::from_u32(oc as u32)
+        B::<4>::from(oc as u32)
     }
 }
 
@@ -80,18 +84,18 @@ impl From<Encoding> for B<28> {
         match e {
             Data(d) => B::<28>::from_b(d),
             Nullary(op) => {
-                let spine = B::<4>::from_u32(0x0);
+                let spine = B::<4>::from(0x0);
                 let opcode = B::<24>::from(op);
                 B::<28>::concat(spine, opcode)
             }
             Unary(op, a) => {
-                let spine = B::<4>::from_u32(0x1);
+                let spine = B::<4>::from(0x1);
                 let op = B::<16>::from(op);
                 let opa = B::<8>::from(a);
                 B::<28>::concat(spine, B::<24>::concat(op, opa))
             }
             Binary(op, a, b) => {
-                let spine = B::<4>::from_u32(0x2);
+                let spine = B::<4>::from(0x2);
                 let op = B::<8>::from(op);
                 let opa = B::<8>::from(a);
                 let opb = B::<8>::from(b);
@@ -110,8 +114,8 @@ impl From<Encoding> for B<28> {
 
 #[test]
 fn test_b28_encoding_data_0xabcdef() {
-    let expected = B::<28>::from_u32(0xabcdef);
-    let inst = Instruction::Data(B::<24>::from_u32(0xabcdef));
+    let expected = B::<28>::from(0xabcdef);
+    let inst = Instruction::Data(B::<24>::from(0xabcdef));
     let enc = Encoding::from(inst);
     let b28 = B::<28>::from(enc);
     assert_eq!(expected, b28);

@@ -1,4 +1,7 @@
-use std::fmt;
+mod debug;
+
+#[cfg(test)]
+mod tests;
 
 /// A collection of N contiguous bits. N <= 32.
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -15,16 +18,29 @@ impl<const N: usize> From<B<N>> for u32 {
     }
 }
 
+impl<const N: usize> From<u32> for B<N> {
+    fn from(u: u32) -> B<N> {
+        B::from_u32(u)
+    }
+}
+
 impl<const N: usize> B<N> {
+    pub fn concat<const J: usize, const K: usize>(a: B<J>, b: B<K>) -> B<N> {
+        assert!(J + K == N);
+        Self::from_u32((a.0 << K) & b.0)
+    }
+
     pub fn try_from_b<const K: usize>(other: B<K>) -> Result<Self, Overflow> {
+        assert!(K > N);
         Self::try_from_u32(other.0)
     }
 
     pub fn from_b<const K: usize>(other: B<K>) -> Self {
+        assert!(K <= N);
         Self::from_u32(other.0)
     }
 
-    pub fn try_from_u32(u: u32) -> Result<Self, Overflow> {
+    fn try_from_u32(u: u32) -> Result<Self, Overflow> {
         let cap = 1u32 << N;
         if u < cap {
             Ok(Self(u))
@@ -36,49 +52,7 @@ impl<const N: usize> B<N> {
         }
     }
 
-    pub fn from_u32(u: u32) -> Self {
+    fn from_u32(u: u32) -> Self {
         Self::try_from_u32(u).expect("Unhandled overflow.")
-    }
-
-    pub fn concat<const J: usize, const K: usize>(a: B<J>, b: B<K>) -> B<N> {
-        Self::from_u32((a.0 << K) & b.0)
-    }
-}
-
-impl<const N: usize> fmt::Debug for B<N> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut bits = vec![];
-        let mut n = self.0;
-        for i in 0..N {
-            bits.push(if n % 2 == 0 { "0" } else { "1" });
-            n >>= 1;
-            if (i + 1) % 4 == 0 {
-                bits.push(" ");
-                if (i + 1) % 8 == 0 {
-                    bits.push(" ");
-                }
-            }
-        }
-
-        bits.reverse();
-
-        write!(f, "B<{}>({})", N, bits.concat())
-    }
-}
-
-impl fmt::Debug for Overflow {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        struct Hexify(u32);
-
-        impl fmt::Debug for Hexify {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "0x{:x}", self.0)
-            }
-        }
-
-        f.debug_struct("Overflow")
-            .field("bitsize", &self.bitsize)
-            .field("input", &Hexify(self.input))
-            .finish()
     }
 }
