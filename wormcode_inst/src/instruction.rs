@@ -3,8 +3,8 @@ mod encoding;
 #[cfg(test)]
 mod tests;
 
-use crate::decode::Decode;
 use crate::Operand;
+use wormcode_bits::Decode;
 use wormcode_bits::B;
 
 pub type Instruction = InstG<Operand>;

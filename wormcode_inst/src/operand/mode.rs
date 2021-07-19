@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use crate::decode::Decode;
+use wormcode_bits::Decode;
 use wormcode_bits::B;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]

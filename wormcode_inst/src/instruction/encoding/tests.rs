@@ -30,7 +30,7 @@ fn test_instruction_data_0xabcdef() {
     Operand::new(Mode::Indirect, B::from(0x29))
 ))]
 fn test_encode_decode(enc: Encoding) {
-    use crate::decode::Decode;
+    use wormcode_bits::Decode;
 
     let b = B::<28>::from(enc);
     let dec = Encoding::decode(b);

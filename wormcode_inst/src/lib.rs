@@ -1,4 +1,3 @@
-mod decode;
 mod instruction;
 mod operand;
 

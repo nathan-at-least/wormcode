@@ -14,7 +14,7 @@ use wormcode_bits::B;
     )
 )]
 fn check_encoding(b28: u32, inst: Instruction) {
-    use crate::decode::Decode;
+    use wormcode_bits::Decode;
 
     let expected = B::<28>::from(b28);
     let enc = inst.encode();
