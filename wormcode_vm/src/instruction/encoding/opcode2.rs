@@ -1,7 +1,7 @@
 use crate::decode::Decode;
 use crate::B;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum OpCode2 {
     Inc,
 }

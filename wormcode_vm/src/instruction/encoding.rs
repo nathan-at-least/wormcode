@@ -3,6 +3,9 @@ mod opcode1;
 mod opcode2;
 mod opcode3;
 
+#[cfg(test)]
+mod tests;
+
 use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
 use crate::decode::Decode;
 use crate::{InstG, Instruction, Operand, B};
@@ -11,7 +14,7 @@ pub fn encode(inst: Instruction) -> B<28> {
     B::<28>::from(Encoding::from(inst))
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 enum Encoding {
     Data(B<24>),
     Nullary(OpCode0),
@@ -103,13 +106,4 @@ impl Decode<28> for Encoding {
             }
         }
     }
-}
-
-#[test]
-fn test_b28_encoding_data_0xabcdef() {
-    let expected = B::<28>::from(0xabcdef);
-    let inst = Instruction::Data(B::<24>::from(0xabcdef));
-    let enc = Encoding::from(inst);
-    let b28 = B::<28>::from(enc);
-    assert_eq!(expected, b28);
 }
