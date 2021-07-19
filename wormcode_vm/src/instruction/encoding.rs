@@ -1,3 +1,10 @@
+mod opcode0;
+mod opcode1;
+mod opcode2;
+mod opcode3;
+
+use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
+use crate::decode::Decode;
 use crate::{InstG, Instruction, Operand, B};
 
 pub fn encode(inst: Instruction) -> B<28> {
@@ -11,54 +18,6 @@ enum Encoding {
     Unary(OpCode1, Operand),
     Binary(OpCode2, Operand, Operand),
     Trinary(OpCode3, Operand, Operand, Operand),
-}
-
-#[derive(Debug)]
-enum OpCode0 {
-    Nop,
-}
-
-impl From<OpCode0> for B<24> {
-    fn from(oc: OpCode0) -> B<24> {
-        B::<24>::from(oc as u32)
-    }
-}
-
-#[derive(Debug)]
-enum OpCode1 {
-    Step,
-}
-
-impl From<OpCode1> for B<16> {
-    fn from(oc: OpCode1) -> B<16> {
-        B::<16>::from(oc as u32)
-    }
-}
-
-#[derive(Debug)]
-enum OpCode2 {
-    Inc,
-}
-
-impl From<OpCode2> for B<8> {
-    fn from(oc: OpCode2) -> B<8> {
-        B::<8>::from(oc as u32)
-    }
-}
-
-#[derive(Debug)]
-enum OpCode3 {
-    // PlaceHolders reserve spine values for non-tertiary instructions:
-    // Data, Nullary, Unary, Binary
-
-    // Actual tertiary instruction opcodes:
-    MemCpy = 0x4,
-}
-
-impl From<OpCode3> for B<4> {
-    fn from(oc: OpCode3) -> B<4> {
-        B::<4>::from(oc as u32)
-    }
 }
 
 impl From<Instruction> for Encoding {
@@ -104,6 +63,43 @@ impl From<Encoding> for B<28> {
                 let opb = B::<8>::from(b);
                 let opc = B::<8>::from(c);
                 B::<28>::concat(op, B::<24>::concat(opa, B::<16>::concat(opb, opc)))
+            }
+        }
+    }
+}
+
+impl Decode<28> for Encoding {
+    fn decode(src: B<28>) -> Option<Self> {
+        use Encoding::*;
+
+        let (spine, guts): (B<4>, B<24>) = src.split();
+
+        if let Some(opc3) = OpCode3::decode(spine) {
+            let (a, bc): (B<8>, B<16>) = guts.split();
+            let (b, c): (B<8>, B<8>) = bc.split();
+            match (Operand::decode(a), Operand::decode(b), Operand::decode(c)) {
+                (Some(opa), Some(opb), Some(opc)) => Some(Trinary(opc3, opa, opb, opc)),
+                _ => None,
+            }
+        } else {
+            match u32::from(spine) {
+                0 => Some(Data(guts)),
+                1 => OpCode0::decode(guts).map(Nullary),
+                2 => {
+                    let (boc, bop): (B<16>, B<8>) = guts.split();
+                    OpCode1::decode(boc)
+                        .zip(Operand::decode(bop))
+                        .map(|(oc, op)| Unary(oc, op))
+                }
+                3 => {
+                    let (boc, bopab): (B<8>, B<16>) = guts.split();
+                    let (bopa, bopb): (B<8>, B<8>) = bopab.split();
+                    OpCode2::decode(boc)
+                        .zip(Operand::decode(bopa))
+                        .zip(Operand::decode(bopb))
+                        .map(|((oc, opa), opb)| Binary(oc, opa, opb))
+                }
+                _ => unreachable!(),
             }
         }
     }
