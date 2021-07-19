@@ -8,7 +8,8 @@ mod tests;
 
 use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
 use crate::decode::Decode;
-use crate::{InstG, Instruction, Operand, B};
+use crate::{InstG, Instruction, Operand};
+use wormcode_bits::B;
 
 pub fn encode(inst: Instruction) -> B<28> {
     B::<28>::from(Encoding::from(inst))

@@ -1,10 +1,11 @@
 use super::{Encoding, OpCode0, OpCode1, OpCode2, OpCode3};
-use crate::{Mode, Operand, B};
+use crate::{Mode, Operand};
 use test_case::test_case;
+use wormcode_bits::B;
 
 #[test]
 fn test_instruction_data_0xabcdef() {
-    use crate::{Instruction, B};
+    use crate::Instruction;
 
     let expected = B::<28>::from(0xabcdef);
     let inst = Instruction::Data(B::<24>::from(0xabcdef));
@@ -30,7 +31,6 @@ fn test_instruction_data_0xabcdef() {
 ))]
 fn test_encode_decode(enc: Encoding) {
     use crate::decode::Decode;
-    use crate::B;
 
     let b = B::<28>::from(enc);
     let dec = Encoding::decode(b);

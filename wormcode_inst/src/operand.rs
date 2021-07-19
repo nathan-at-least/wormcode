@@ -6,7 +6,7 @@ mod tests;
 pub use self::mode::Mode;
 
 use crate::decode::Decode;
-use crate::B;
+use wormcode_bits::B;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Operand {

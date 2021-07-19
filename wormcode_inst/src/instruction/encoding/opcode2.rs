@@ -1,5 +1,5 @@
 use crate::decode::Decode;
-use crate::B;
+use wormcode_bits::B;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum OpCode2 {

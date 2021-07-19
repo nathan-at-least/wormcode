@@ -1,5 +1,6 @@
-use crate::{InstG::*, Instruction, Mode::*, Operand, B};
+use crate::{InstG::*, Instruction, Mode::*, Operand};
 use test_case::test_case;
+use wormcode_bits::B;
 
 #[test_case(0x42, Data(B::<24>::from(0x42u32)))]
 #[test_case(0x1_00_00_00, Nop)]

@@ -4,7 +4,8 @@ mod encoding;
 mod tests;
 
 use crate::decode::Decode;
-use crate::{Operand, B};
+use crate::Operand;
+use wormcode_bits::B;
 
 pub type Instruction = InstG<Operand>;
 
