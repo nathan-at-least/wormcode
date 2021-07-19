@@ -1,4 +1,5 @@
-mod encoding;
+// This pulls in `Encode<28>` / `Decode<28>`
+mod intermediate;
 
 #[cfg(test)]
 mod tests;

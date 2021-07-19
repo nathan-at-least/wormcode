@@ -12,18 +12,18 @@ use wormcode_bits::{Decode, Encode, B};
 
 impl Encode<28> for Instruction {
     fn encode(self) -> B<28> {
-        Encoding::from(self).encode()
+        Intermediate::from(self).encode()
     }
 }
 
 impl Decode<28> for Instruction {
     fn decode(bits: B<28>) -> Option<Instruction> {
-        Encoding::decode(bits).map(Instruction::from)
+        Intermediate::decode(bits).map(Instruction::from)
     }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-enum Encoding {
+enum Intermediate {
     Data(B<24>),
     Nullary(OpCode0),
     Unary(OpCode1, Operand),
@@ -31,12 +31,12 @@ enum Encoding {
     Trinary(OpCode3, Operand, Operand, Operand),
 }
 
-impl From<Instruction> for Encoding {
-    fn from(i: Instruction) -> Encoding {
-        use Encoding::{Binary, Nullary, Trinary, Unary};
+impl From<Instruction> for Intermediate {
+    fn from(i: Instruction) -> Intermediate {
+        use Intermediate::{Binary, Nullary, Trinary, Unary};
 
         match i {
-            InstG::Data(d) => Encoding::Data(d),
+            InstG::Data(d) => Intermediate::Data(d),
             InstG::Nop => Nullary(OpCode0::Nop),
             InstG::Step(a) => Unary(OpCode1::Step, a),
             InstG::Inc(a, b) => Binary(OpCode2::Inc, a, b),
@@ -45,12 +45,12 @@ impl From<Instruction> for Encoding {
     }
 }
 
-impl From<Encoding> for Instruction {
-    fn from(e: Encoding) -> Instruction {
-        use Encoding::{Binary, Nullary, Trinary, Unary};
+impl From<Intermediate> for Instruction {
+    fn from(e: Intermediate) -> Instruction {
+        use Intermediate::{Binary, Nullary, Trinary, Unary};
 
         match e {
-            Encoding::Data(d) => InstG::Data(d),
+            Intermediate::Data(d) => InstG::Data(d),
             Nullary(OpCode0::Nop) => InstG::Nop,
             Unary(OpCode1::Step, a) => InstG::Step(a),
             Binary(OpCode2::Inc, a, b) => InstG::Inc(a, b),
@@ -59,9 +59,9 @@ impl From<Encoding> for Instruction {
     }
 }
 
-impl Encode<28> for Encoding {
+impl Encode<28> for Intermediate {
     fn encode(self) -> B<28> {
-        use Encoding::*;
+        use Intermediate::*;
         match self {
             Data(d) => B::<28>::from_b(d),
             Nullary(op) => {
@@ -93,9 +93,9 @@ impl Encode<28> for Encoding {
     }
 }
 
-impl Decode<28> for Encoding {
+impl Decode<28> for Intermediate {
     fn decode(src: B<28>) -> Option<Self> {
-        use Encoding::*;
+        use Intermediate::*;
 
         let (spine, guts): (B<4>, B<24>) = src.split();
 
