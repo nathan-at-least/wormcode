@@ -5,8 +5,7 @@ mod tests;
 
 pub use self::mode::Mode;
 
-use wormcode_bits::Decode;
-use wormcode_bits::B;
+use wormcode_bits::{Decode, B};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Operand {

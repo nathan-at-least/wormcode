@@ -17,8 +17,7 @@ fn encode_decode_indirect() {
 
 fn test_encode_decode(m: Mode, scalarbits: u32, encbits: u32) {
     use crate::Operand;
-    use wormcode_bits::Decode;
-    use wormcode_bits::B;
+    use wormcode_bits::{Decode, B};
 
     let op = Operand::new(m, B::<6>::from(scalarbits));
     let enc = B::<8>::from(op);

@@ -5,8 +5,7 @@ use test_case::test_case;
 #[test_case(1, Direct)]
 #[test_case(2, Indirect)]
 fn codec(exp: u32, mode: Mode) {
-    use wormcode_bits::Decode;
-    use wormcode_bits::B;
+    use wormcode_bits::{Decode, B};
 
     let expected = B::<2>::from(exp);
     let encoded = B::<2>::from(mode);

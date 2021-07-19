@@ -1,8 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use wormcode_bits::Decode;
-use wormcode_bits::B;
+use wormcode_bits::{Decode, B};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mode {
