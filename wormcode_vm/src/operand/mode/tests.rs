@@ -1,21 +1,16 @@
-macro_rules! def_test {
-    ( $name:ident, $mode:expr, $u:expr ) => {
-        #[test]
-        fn $name() {
-            use crate::decode::Decode;
-            use crate::Mode;
-            use crate::B;
+use super::Mode::{self, Direct, Indirect, Literal};
+use test_case::test_case;
 
-            let mode = $mode;
-            let expected = B::<2>::from($u);
-            let encoded = B::<2>::from(mode);
-            assert_eq!(expected, encoded);
-            let decoded = Mode::decode(encoded).unwrap();
-            assert_eq!(mode, decoded);
-        }
-    };
+#[test_case(0, Literal)]
+#[test_case(1, Direct)]
+#[test_case(2, Indirect)]
+fn codec(exp: u32, mode: Mode) {
+    use crate::decode::Decode;
+    use crate::B;
+
+    let expected = B::<2>::from(exp);
+    let encoded = B::<2>::from(mode);
+    assert_eq!(expected, encoded);
+    let decoded = Mode::decode(encoded).unwrap();
+    assert_eq!(mode, decoded);
 }
-
-def_test!(literal, Mode::Literal, 0);
-def_test!(direct, Mode::Direct, 1);
-def_test!(indirect, Mode::Indirect, 2);
