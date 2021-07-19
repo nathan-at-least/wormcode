@@ -1,13 +1,13 @@
-use wormcode_bits::{Decode, B};
+use wormcode_bits::{Decode, Encode, B};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum OpCode2 {
     Inc,
 }
 
-impl From<OpCode2> for B<8> {
-    fn from(oc: OpCode2) -> B<8> {
-        B::<8>::from(oc as u32)
+impl Encode<8> for OpCode2 {
+    fn encode(self) -> B<8> {
+        B::<8>::from(self as u32)
     }
 }
 

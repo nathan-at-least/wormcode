@@ -4,7 +4,7 @@ mod encoding;
 mod tests;
 
 use crate::Operand;
-use wormcode_bits::{Decode, B};
+use wormcode_bits::B;
 
 pub type Instruction = InstG<Operand>;
 
@@ -15,16 +15,4 @@ pub enum InstG<Op> {
     Step(Op),
     Inc(Op, Op),
     MemCpy(Op, Op, Op),
-}
-
-impl Instruction {
-    pub fn encode(self) -> B<28> {
-        encoding::encode(self)
-    }
-}
-
-impl Decode<28> for Instruction {
-    fn decode(b: B<28>) -> Option<Self> {
-        encoding::decode(b)
-    }
 }

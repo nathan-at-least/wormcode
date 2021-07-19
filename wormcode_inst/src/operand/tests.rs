@@ -17,10 +17,10 @@ fn encode_decode_indirect() {
 
 fn test_encode_decode(m: Mode, scalarbits: u32, encbits: u32) {
     use crate::Operand;
-    use wormcode_bits::{Decode, B};
+    use wormcode_bits::{Decode, Encode, B};
 
     let op = Operand::new(m, B::<6>::from(scalarbits));
-    let enc = B::<8>::from(op);
+    let enc = op.encode();
     assert_eq!(B::<8>::from(encbits), enc);
     let opdec = Operand::decode(enc);
     assert_eq!(Some(op), opdec);

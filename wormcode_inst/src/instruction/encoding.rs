@@ -8,14 +8,18 @@ mod tests;
 
 use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
 use crate::{InstG, Instruction, Operand};
-use wormcode_bits::{Decode, B};
+use wormcode_bits::{Decode, Encode, B};
 
-pub fn encode(inst: Instruction) -> B<28> {
-    B::<28>::from(Encoding::from(inst))
+impl Encode<28> for Instruction {
+    fn encode(self) -> B<28> {
+        Encoding::from(self).encode()
+    }
 }
 
-pub fn decode(bits: B<28>) -> Option<Instruction> {
-    Encoding::decode(bits).map(Instruction::from)
+impl Decode<28> for Instruction {
+    fn decode(bits: B<28>) -> Option<Instruction> {
+        Encoding::decode(bits).map(Instruction::from)
+    }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -55,35 +59,35 @@ impl From<Encoding> for Instruction {
     }
 }
 
-impl From<Encoding> for B<28> {
-    fn from(e: Encoding) -> B<28> {
+impl Encode<28> for Encoding {
+    fn encode(self) -> B<28> {
         use Encoding::*;
-        match e {
+        match self {
             Data(d) => B::<28>::from_b(d),
             Nullary(op) => {
                 let spine = B::<4>::from(0x1);
-                let opcode = B::<24>::from(op);
+                let opcode = op.encode();
                 B::<28>::concat(spine, opcode)
             }
             Unary(op, a) => {
                 let spine = B::<4>::from(0x2);
-                let op = B::<16>::from(op);
-                let opa = B::<8>::from(a);
-                B::<28>::concat(spine, B::<24>::concat(op, opa))
+                let opop = op.encode();
+                let opa = a.encode();
+                B::<28>::concat(spine, B::<24>::concat(opop, opa))
             }
             Binary(op, a, b) => {
                 let spine = B::<4>::from(0x3);
-                let op = B::<8>::from(op);
-                let opa = B::<8>::from(a);
-                let opb = B::<8>::from(b);
-                B::<28>::concat(spine, B::<24>::concat(op, B::<16>::concat(opa, opb)))
+                let opop = op.encode();
+                let opa = a.encode();
+                let opb = b.encode();
+                B::<28>::concat(spine, B::<24>::concat(opop, B::<16>::concat(opa, opb)))
             }
             Trinary(op, a, b, c) => {
-                let op = B::<4>::from(op);
-                let opa = B::<8>::from(a);
-                let opb = B::<8>::from(b);
-                let opc = B::<8>::from(c);
-                B::<28>::concat(op, B::<24>::concat(opa, B::<16>::concat(opb, opc)))
+                let opop = op.encode();
+                let opa = a.encode();
+                let opb = b.encode();
+                let opc = c.encode();
+                B::<28>::concat(opop, B::<24>::concat(opa, B::<16>::concat(opb, opc)))
             }
         }
     }

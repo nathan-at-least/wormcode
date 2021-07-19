@@ -5,7 +5,7 @@ mod tests;
 
 pub use self::mode::Mode;
 
-use wormcode_bits::{Decode, B};
+use wormcode_bits::{Decode, Encode, B};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Operand {
@@ -19,9 +19,9 @@ impl Operand {
     }
 }
 
-impl From<Operand> for B<8> {
-    fn from(od: Operand) -> B<8> {
-        B::<8>::concat(B::<2>::from(od.mode), od.scalar)
+impl Encode<8> for Operand {
+    fn encode(self) -> B<8> {
+        B::<8>::concat(B::<2>::from(self.mode), self.scalar)
     }
 }
 
