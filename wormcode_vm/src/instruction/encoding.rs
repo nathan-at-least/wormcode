@@ -14,6 +14,10 @@ pub fn encode(inst: Instruction) -> B<28> {
     B::<28>::from(Encoding::from(inst))
 }
 
+pub fn decode(bits: B<28>) -> Option<Instruction> {
+    Encoding::decode(bits).map(Instruction::from)
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 enum Encoding {
     Data(B<24>),
@@ -33,6 +37,20 @@ impl From<Instruction> for Encoding {
             InstG::Step(a) => Unary(OpCode1::Step, a),
             InstG::Inc(a, b) => Binary(OpCode2::Inc, a, b),
             InstG::MemCpy(a, b, c) => Trinary(OpCode3::MemCpy, a, b, c),
+        }
+    }
+}
+
+impl From<Encoding> for Instruction {
+    fn from(e: Encoding) -> Instruction {
+        use Encoding::{Binary, Nullary, Trinary, Unary};
+
+        match e {
+            Encoding::Data(d) => InstG::Data(d),
+            Nullary(OpCode0::Nop) => InstG::Nop,
+            Unary(OpCode1::Step, a) => InstG::Step(a),
+            Binary(OpCode2::Inc, a, b) => InstG::Inc(a, b),
+            Trinary(OpCode3::MemCpy, a, b, c) => InstG::MemCpy(a, b, c),
         }
     }
 }

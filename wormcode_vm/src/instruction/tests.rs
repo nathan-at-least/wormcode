@@ -13,7 +13,11 @@ use test_case::test_case;
     )
 )]
 fn check_encoding(b28: u32, inst: Instruction) {
+    use crate::decode::Decode;
+
     let expected = B::<28>::from(b28);
-    let actual = inst.encode();
-    assert_eq!(expected, actual);
+    let enc = inst.encode();
+    assert_eq!(expected, enc);
+    let dec = Instruction::decode(enc);
+    assert_eq!(Some(inst), dec);
 }
