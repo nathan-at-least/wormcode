@@ -1,15 +1,15 @@
 mod parseinst;
-mod tokenstream;
-
-use wormcode_inst::Instruction;
 
 pub use parseinst::parse_instruction;
 
-#[derive(Debug)]
+use wormcode_inst::Instruction;
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParseError {
     Expected(&'static str),
     Unexpected(String),
     UnknownMnemonic(String),
+    Overflow(wormcode_bits::Overflow),
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;

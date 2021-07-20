@@ -11,3 +11,6 @@ path = "../wormcode_bits"
 
 [dependencies.wormcode_inst]
 path = "../wormcode_inst"
+
+[dev-dependencies]
+test-case = "1.2.0"

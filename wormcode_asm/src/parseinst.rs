@@ -1,5 +1,10 @@
-use crate::tokenstream::TokenStream;
+mod tokenstream;
+
+#[cfg(test)]
+mod tests;
+
 use crate::{ParseError, ParseResult};
+use tokenstream::TokenStream;
 use wormcode_bits::B;
 use wormcode_inst::{Instruction, Operand};
 

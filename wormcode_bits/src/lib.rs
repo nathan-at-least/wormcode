@@ -10,9 +10,10 @@ pub use codec::{Decode, Encode};
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct B<const N: usize>(u32);
 
+#[derive(PartialEq, Eq)]
 pub struct Overflow {
-    bitsize: usize,
-    input: u32,
+    pub bitsize: usize,
+    pub input: u32,
 }
 
 impl<const N: usize> From<B<N>> for u32 {
