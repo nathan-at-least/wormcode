@@ -53,7 +53,8 @@ impl<const N: usize> B<N> {
         Self::from_u32(other.0)
     }
 
-    fn try_from_u32(u: u32) -> Result<Self, Overflow> {
+    // We can't implement std::convert::TryFrom due to core blanket conflict.
+    pub fn try_from_u32(u: u32) -> Result<Self, Overflow> {
         assert!(N <= 32);
         let cap: u64 = 1u64 << N;
         if (u as u64) < cap {

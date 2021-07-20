@@ -1,4 +1,5 @@
-use crate::{ParseError::*, ParseResult};
+use crate::DatumParseError::Overflow as DPEOverflow;
+use crate::{ParseError::MalformedDatum, ParseResult};
 use test_case::test_case;
 use wormcode_bits::{Overflow, B};
 use wormcode_inst::{
@@ -9,7 +10,7 @@ use wormcode_inst::{
 
 #[test_case("data 42" => Ok(Data(B::from(42))))]
 #[test_case("data 0x42" => Ok(Data(B::from(0x42))))]
-#[test_case("data 0x12_34_56_78" => Err(Overflow(Overflow { bitsize: 24, input: 0x12_34_56_78 })))]
+#[test_case("data 0x12345678" => Err(MalformedDatum(DPEOverflow(Overflow { bitsize: 24, input: 0x12_34_56_78 }))))]
 #[test_case("nop" => Ok(Nop))]
 #[test_case(
     "step 1" =>
@@ -27,8 +28,8 @@ use wormcode_inst::{
     "inc 1 2" =>
     Ok(
         Inc(
-            Operand::new(Indirect, B::from(1)),
-            Operand::new(Indirect, B::from(2))
+            Operand::new(Literal, B::from(1)),
+            Operand::new(Literal, B::from(2))
         )
     )
 )]
@@ -36,9 +37,9 @@ use wormcode_inst::{
     "memcpy 1 2 3" =>
     Ok(
         MemCpy(
-            Operand::new(Indirect, B::from(1)),
-            Operand::new(Indirect, B::from(2)),
-            Operand::new(Indirect, B::from(3))
+            Operand::new(Literal, B::from(1)),
+            Operand::new(Literal, B::from(2)),
+            Operand::new(Literal, B::from(3))
         )
     )
 )]

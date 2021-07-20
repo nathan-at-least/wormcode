@@ -3,8 +3,8 @@ mod tokenstream;
 #[cfg(test)]
 mod tests;
 
-use crate::{ParseError, ParseResult};
-use tokenstream::TokenStream;
+use self::tokenstream::TokenStream;
+use crate::{parseb::parse_b, ParseError, ParseResult};
 use wormcode_bits::B;
 use wormcode_inst::{Instruction, Operand};
 
@@ -57,7 +57,7 @@ impl<'a> InstructionParser<'a> {
 
         fn unwrap_brackets(s: &str) -> ParseResult<Option<&str>> {
             if let Some(t) = s.strip_prefix('[') {
-                if let Some(u) = t.strip_prefix(']') {
+                if let Some(u) = t.strip_suffix(']') {
                     Ok(Some(u))
                 } else {
                     Err(ParseError::Expected("close bracket ']'"))
@@ -81,10 +81,6 @@ impl<'a> InstructionParser<'a> {
             Ok(Operand::new(Literal, b))
         }
     }
-}
-
-fn parse_b<const N: usize>(_s: &str) -> ParseResult<B<N>> {
-    todo!();
 }
 
 fn trim_comment(line: &str) -> &str {

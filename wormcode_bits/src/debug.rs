@@ -18,7 +18,7 @@ impl<const N: usize> fmt::Debug for B<N> {
 
         bits.reverse();
 
-        write!(f, "B<{}>({})", N, bits.concat())
+        write!(f, "B<{}>({})", N, bits.concat().trim_start())
     }
 }
 impl fmt::Debug for Overflow {
@@ -35,5 +35,19 @@ impl fmt::Debug for Overflow {
             .field("bitsize", &self.bitsize)
             .field("input", &Hexify(self.input))
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::B;
+    use test_case::test_case;
+
+    #[test_case(B::<3>::from(0x5) => "B<3>(101)")]
+    #[test_case(B::<4>::from(0xa) => "B<4>(1010)")]
+    #[test_case(B::<8>::from(0xa5) => "B<8>(1010 0101)")]
+    #[test_case(B::<16>::from(0xa55a) => "B<16>(1010 0101  0101 1010)")]
+    fn format<const N: usize>(b: B<N>) -> String {
+        format!("{:?}", b)
     }
 }

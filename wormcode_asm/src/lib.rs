@@ -1,5 +1,7 @@
+mod parseb;
 mod parseinst;
 
+pub use parseb::DatumParseError;
 pub use parseinst::parse_instruction;
 
 use wormcode_inst::Instruction;
@@ -9,7 +11,7 @@ pub enum ParseError {
     Expected(&'static str),
     Unexpected(String),
     UnknownMnemonic(String),
-    Overflow(wormcode_bits::Overflow),
+    MalformedDatum(DatumParseError),
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;
