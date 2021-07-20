@@ -1,5 +1,6 @@
-mod arginfo;
+mod tokenstream;
 
+use tokenstream::TokenStream;
 use wormcode_bits::B;
 use wormcode_inst::{Instruction, Operand};
 
@@ -17,7 +18,7 @@ pub fn parse(src: &str) -> ParseResult<Vec<Instruction>> {
 
     for line in src.lines() {
         let line = trim_comment(line);
-        let mut stream = TokenStream(line.split_whitespace());
+        let mut stream = TokenStream::from_line(line);
         let mnemonic = stream.require_token("mnemonic")?;
         let inst = parse_instruction(&mut stream, mnemonic)?;
         stream.finish()?;
@@ -92,20 +93,4 @@ fn trim_comment(line: &str) -> &str {
         line
     }
     .trim()
-}
-
-struct TokenStream<'a>(std::str::SplitWhitespace<'a>);
-
-impl<'a> TokenStream<'a> {
-    fn require_token(&mut self, tokname: &'static str) -> ParseResult<&'a str> {
-        self.0.next().ok_or(ParseError::Expected(tokname))
-    }
-
-    fn finish(mut self) -> ParseResult<()> {
-        if let Some(noise) = self.0.next() {
-            Err(ParseError::Unexpected(String::from(noise)))
-        } else {
-            Ok(())
-        }
-    }
 }
