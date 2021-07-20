@@ -1,0 +1,13 @@
+[package]
+name = "wormcode_asm"
+version = "0.1.0"
+authors = ["Nate Wilcox <nejucomo+dev@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.wormcode_bits]
+path = "../wormcode_bits"
+
+[dependencies.wormcode_inst]
+path = "../wormcode_inst"

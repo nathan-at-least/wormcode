@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "wormcode_asm",
     "wormcode_bits",
     "wormcode_inst",
 ]
