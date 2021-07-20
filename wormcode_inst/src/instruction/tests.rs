@@ -1,4 +1,8 @@
-use crate::{InstG::*, Instruction, Mode::*, Operand};
+use crate::{
+    Instruction::{self, *},
+    Mode::*,
+    Operand,
+};
 use test_case::test_case;
 use wormcode_bits::B;
 

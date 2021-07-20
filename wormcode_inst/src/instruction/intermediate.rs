@@ -7,7 +7,7 @@ mod opcode3;
 mod tests;
 
 use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
-use crate::{InstG, Instruction, Operand};
+use crate::{Instruction, Operand};
 use wormcode_bits::{Decode, Encode, B};
 
 impl Encode<28> for Instruction {
@@ -36,11 +36,11 @@ impl From<Instruction> for Intermediate {
         use Intermediate::{Binary, Nullary, Trinary, Unary};
 
         match i {
-            InstG::Data(d) => Intermediate::Data(d),
-            InstG::Nop => Nullary(OpCode0::Nop),
-            InstG::Step(a) => Unary(OpCode1::Step, a),
-            InstG::Inc(a, b) => Binary(OpCode2::Inc, a, b),
-            InstG::MemCpy(a, b, c) => Trinary(OpCode3::MemCpy, a, b, c),
+            Instruction::Data(d) => Intermediate::Data(d),
+            Instruction::Nop => Nullary(OpCode0::Nop),
+            Instruction::Step(a) => Unary(OpCode1::Step, a),
+            Instruction::Inc(a, b) => Binary(OpCode2::Inc, a, b),
+            Instruction::MemCpy(a, b, c) => Trinary(OpCode3::MemCpy, a, b, c),
         }
     }
 }
@@ -50,11 +50,11 @@ impl From<Intermediate> for Instruction {
         use Intermediate::{Binary, Nullary, Trinary, Unary};
 
         match e {
-            Intermediate::Data(d) => InstG::Data(d),
-            Nullary(OpCode0::Nop) => InstG::Nop,
-            Unary(OpCode1::Step, a) => InstG::Step(a),
-            Binary(OpCode2::Inc, a, b) => InstG::Inc(a, b),
-            Trinary(OpCode3::MemCpy, a, b, c) => InstG::MemCpy(a, b, c),
+            Intermediate::Data(d) => Instruction::Data(d),
+            Nullary(OpCode0::Nop) => Instruction::Nop,
+            Unary(OpCode1::Step, a) => Instruction::Step(a),
+            Binary(OpCode2::Inc, a, b) => Instruction::Inc(a, b),
+            Trinary(OpCode3::MemCpy, a, b, c) => Instruction::MemCpy(a, b, c),
         }
     }
 }

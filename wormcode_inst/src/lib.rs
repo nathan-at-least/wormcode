@@ -1,5 +1,5 @@
 mod instruction;
 mod operand;
 
-pub use instruction::{InstG, Instruction};
+pub use instruction::Instruction;
 pub use operand::{Mode, Operand};

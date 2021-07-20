@@ -4,13 +4,11 @@ mod intermediate;
 #[cfg(test)]
 mod tests;
 
-use crate::Operand;
+use crate::Operand as Op;
 use wormcode_bits::B;
 
-pub type Instruction = InstG<Operand>;
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum InstG<Op> {
+pub enum Instruction {
     Data(B<24>),
     Nop,
     Step(Op),
