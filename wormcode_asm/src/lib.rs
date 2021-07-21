@@ -1,6 +1,9 @@
 mod parseb;
 mod parseinst;
 
+#[cfg(test)]
+mod tests;
+
 pub use parseb::DatumParseError;
 pub use parseinst::parse_instruction;
 
