@@ -12,7 +12,7 @@ impl Encode<8> for OpCode2 {
 }
 
 impl Decode<8> for OpCode2 {
-    fn decode(src: B<8>) -> Option<Self> {
+    fn decode_option(src: B<8>) -> Option<Self> {
         use OpCode2::*;
 
         match u32::from(src) {

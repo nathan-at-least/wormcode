@@ -16,7 +16,7 @@ impl Encode<4> for OpCode3 {
 }
 
 impl Decode<4> for OpCode3 {
-    fn decode(src: B<4>) -> Option<Self> {
+    fn decode_option(src: B<4>) -> Option<Self> {
         use OpCode3::*;
 
         match u32::from(src) {

@@ -5,7 +5,7 @@ mod tests;
 
 pub use self::mode::Mode;
 
-use wormcode_bits::{Decode, Encode, B};
+use wormcode_bits::{Decode, DecodeResult, Encode, B};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Operand {
@@ -26,8 +26,9 @@ impl Encode<8> for Operand {
 }
 
 impl Decode<8> for Operand {
-    fn decode(src: B<8>) -> Option<Self> {
+    fn decode(src: B<8>) -> DecodeResult<Self> {
         let (modebits, scalar) = src.split::<2, 6>();
-        Mode::decode(modebits).map(|m| Operand::new(m, scalar))
+        let mode = Mode::decode(modebits)?;
+        Ok(Operand::new(mode, scalar))
     }
 }

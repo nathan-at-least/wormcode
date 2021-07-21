@@ -8,7 +8,7 @@ mod tests;
 
 use self::{opcode0::OpCode0, opcode1::OpCode1, opcode2::OpCode2, opcode3::OpCode3};
 use crate::{Instruction, Operand};
-use wormcode_bits::{Decode, Encode, B};
+use wormcode_bits::{Decode, DecodeResult, Encode, B};
 
 impl Encode<28> for Instruction {
     fn encode(self) -> B<28> {
@@ -17,7 +17,7 @@ impl Encode<28> for Instruction {
 }
 
 impl Decode<28> for Instruction {
-    fn decode(bits: B<28>) -> Option<Instruction> {
+    fn decode(bits: B<28>) -> DecodeResult<Self> {
         Intermediate::decode(bits).map(Instruction::from)
     }
 }
@@ -94,33 +94,33 @@ impl Encode<28> for Intermediate {
 }
 
 impl Decode<28> for Intermediate {
-    fn decode(src: B<28>) -> Option<Self> {
+    fn decode(src: B<28>) -> DecodeResult<Self> {
         use Intermediate::*;
 
         let (spine, guts) = src.split::<4, 24>();
 
-        if let Some(opc3) = OpCode3::decode(spine) {
+        if let Some(opc3) = OpCode3::decode_option(spine) {
             let (a, b, c) = guts.split3::<8, 8, 8>();
-            match (Operand::decode(a), Operand::decode(b), Operand::decode(c)) {
-                (Some(opa), Some(opb), Some(opc)) => Some(Trinary(opc3, opa, opb, opc)),
-                _ => None,
-            }
+            let opa = Operand::decode(a)?;
+            let opb = Operand::decode(b)?;
+            let opc = Operand::decode(c)?;
+            Ok(Trinary(opc3, opa, opb, opc))
         } else {
             match u32::from(spine) {
-                0 => Some(Data(guts)),
+                0 => Ok(Data(guts)),
                 1 => OpCode0::decode(guts).map(Nullary),
                 2 => {
                     let (boc, bop) = guts.split::<16, 8>();
-                    OpCode1::decode(boc)
-                        .zip(Operand::decode(bop))
-                        .map(|(oc, op)| Unary(oc, op))
+                    let oc = OpCode1::decode(boc)?;
+                    let op = Operand::decode(bop)?;
+                    Ok(Unary(oc, op))
                 }
                 3 => {
                     let (boc, bopa, bopb) = guts.split3::<8, 8, 8>();
-                    OpCode2::decode(boc)
-                        .zip(Operand::decode(bopa))
-                        .zip(Operand::decode(bopb))
-                        .map(|((oc, opa), opb)| Binary(oc, opa, opb))
+                    let oc = OpCode2::decode(boc)?;
+                    let opa = Operand::decode(bopa)?;
+                    let opb = Operand::decode(bopb)?;
+                    Ok(Binary(oc, opa, opb))
                 }
                 _ => unreachable!(),
             }

@@ -34,6 +34,6 @@ fn test_encode_decode(enc: Intermediate) {
     use wormcode_bits::{Decode, Encode};
 
     let b: B<28> = enc.encode();
-    let dec = Intermediate::decode(b);
+    let dec = Intermediate::decode_option(b);
     assert_eq!(Some(enc), dec);
 }

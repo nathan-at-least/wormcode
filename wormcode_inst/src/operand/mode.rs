@@ -17,7 +17,7 @@ impl From<Mode> for B<2> {
 }
 
 impl Decode<2> for Mode {
-    fn decode(b: B<2>) -> Option<Self> {
+    fn decode_option(b: B<2>) -> Option<Self> {
         use Mode::*;
 
         match u32::from(b) {

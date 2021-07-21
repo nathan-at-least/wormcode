@@ -23,6 +23,6 @@ fn check_encoding(b28: u32, inst: Instruction) {
     let expected = B::<28>::from(b28);
     let enc = inst.encode();
     assert_eq!(expected, enc);
-    let dec = Instruction::decode(enc);
+    let dec = Instruction::decode_option(enc);
     assert_eq!(Some(inst), dec);
 }

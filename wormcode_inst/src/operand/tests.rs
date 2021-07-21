@@ -1,27 +1,17 @@
 use crate::Mode;
+use test_case::test_case;
 
-#[test]
-fn encode_decode_literal() {
-    test_encode_decode(Mode::Literal, 0x5, 0x5);
-}
-
-#[test]
-fn encode_decode_direct() {
-    test_encode_decode(Mode::Direct, 0x5, 0x45);
-}
-
-#[test]
-fn encode_decode_indirect() {
-    test_encode_decode(Mode::Indirect, 0x5, 0x85);
-}
-
-fn test_encode_decode(m: Mode, scalarbits: u32, encbits: u32) {
+#[test_case(Mode::Literal, 0x5 => 0x5)]
+#[test_case(Mode::Direct, 0x5 => 0x45)]
+#[test_case(Mode::Indirect, 0x5 => 0x85)]
+fn test_encode_decode(m: Mode, scalarbits: u32) -> u32 {
     use crate::Operand;
     use wormcode_bits::{Decode, Encode, B};
 
     let op = Operand::new(m, B::<6>::from(scalarbits));
     let enc = op.encode();
-    assert_eq!(B::<8>::from(encbits), enc);
-    let opdec = Operand::decode(enc);
+    let opdec = Operand::decode_option(enc);
     assert_eq!(Some(op), opdec);
+
+    u32::from(enc)
 }
