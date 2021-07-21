@@ -54,4 +54,18 @@ fn split_2_3() {
     let bu32 = u32::from(b);
     assert_eq!(au32, 0x2);
     assert_eq!(bu32, 0x6);
+
+    // Test alt syntax:
+    let (a2, b2) = x.split::<2, 3>();
+    assert_eq!(a, a2);
+    assert_eq!(b, b2);
+}
+
+#[test]
+fn split_2_5_3() {
+    let x = B::<10>::from(0x316);
+    let (a, b, c) = x.split3::<2, 5, 3>();
+    assert_eq!(u32::from(a), 0x3);
+    assert_eq!(u32::from(b), 0x2);
+    assert_eq!(u32::from(c), 0x6);
 }

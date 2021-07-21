@@ -97,11 +97,10 @@ impl Decode<28> for Intermediate {
     fn decode(src: B<28>) -> Option<Self> {
         use Intermediate::*;
 
-        let (spine, guts): (B<4>, B<24>) = src.split();
+        let (spine, guts) = src.split::<4, 24>();
 
         if let Some(opc3) = OpCode3::decode(spine) {
-            let (a, bc): (B<8>, B<16>) = guts.split();
-            let (b, c): (B<8>, B<8>) = bc.split();
+            let (a, b, c) = guts.split3::<8, 8, 8>();
             match (Operand::decode(a), Operand::decode(b), Operand::decode(c)) {
                 (Some(opa), Some(opb), Some(opc)) => Some(Trinary(opc3, opa, opb, opc)),
                 _ => None,
@@ -111,14 +110,13 @@ impl Decode<28> for Intermediate {
                 0 => Some(Data(guts)),
                 1 => OpCode0::decode(guts).map(Nullary),
                 2 => {
-                    let (boc, bop): (B<16>, B<8>) = guts.split();
+                    let (boc, bop) = guts.split::<16, 8>();
                     OpCode1::decode(boc)
                         .zip(Operand::decode(bop))
                         .map(|(oc, op)| Unary(oc, op))
                 }
                 3 => {
-                    let (boc, bopab): (B<8>, B<16>) = guts.split();
-                    let (bopa, bopb): (B<8>, B<8>) = bopab.split();
+                    let (boc, bopa, bopb) = guts.split3::<8, 8, 8>();
                     OpCode2::decode(boc)
                         .zip(Operand::decode(bopa))
                         .zip(Operand::decode(bopb))

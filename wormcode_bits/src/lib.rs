@@ -43,6 +43,19 @@ impl<const N: usize> B<N> {
         (a, b)
     }
 
+    pub fn split3<const J: usize, const K: usize, const L: usize>(self) -> (B<J>, B<K>, B<L>) {
+        assert!(N <= 32);
+        assert_eq!(J + K + L, N);
+        dbg!(self);
+        let a = B::<J>::from(self.0 >> (K + L));
+        dbg!(a);
+        let b = B::<K>::from(self.0 >> L & ((1 << K) - 1));
+        dbg!(b);
+        let c = B::<L>::from(self.0 & ((1 << L) - 1));
+        dbg!(c);
+        (a, b, c)
+    }
+
     pub fn try_from_b<const K: usize>(other: B<K>) -> Result<Self, Overflow> {
         assert!(K > N);
         Self::try_from_u32(other.0)

@@ -27,7 +27,7 @@ impl Encode<8> for Operand {
 
 impl Decode<8> for Operand {
     fn decode(src: B<8>) -> Option<Self> {
-        let (modebits, scalar): (B<2>, B<6>) = src.split();
+        let (modebits, scalar) = src.split::<2, 6>();
         Mode::decode(modebits).map(|m| Operand::new(m, scalar))
     }
 }
