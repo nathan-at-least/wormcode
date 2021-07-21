@@ -41,7 +41,7 @@ from_into_tests!(from_into_3, 3u32);
 
 #[test]
 fn concat_2_3() {
-    let a = B::<5>::concat(B::<2>::from(0x2), B::<3>::from(0x6));
+    let a: B<5> = B::<2>::from(0x2).concat(B::<3>::from(0x6));
     let b = B::<5>::from(0x16);
     assert_eq!(a, b);
 }

@@ -67,27 +67,27 @@ impl Encode<28> for Intermediate {
             Nullary(op) => {
                 let spine = B::<4>::from(0x1);
                 let opcode = op.encode();
-                B::<28>::concat(spine, opcode)
+                spine.concat(opcode)
             }
             Unary(op, a) => {
                 let spine = B::<4>::from(0x2);
                 let opop = op.encode();
                 let opa = a.encode();
-                B::<28>::concat(spine, B::<24>::concat(opop, opa))
+                spine.concat::<16, 20>(opop).concat(opa)
             }
             Binary(op, a, b) => {
                 let spine = B::<4>::from(0x3);
                 let opop = op.encode();
                 let opa = a.encode();
                 let opb = b.encode();
-                B::<28>::concat(spine, B::<24>::concat(opop, B::<16>::concat(opa, opb)))
+                spine.concat::<8, 12>(opop).concat::<8, 20>(opa).concat(opb)
             }
             Trinary(op, a, b, c) => {
                 let opop = op.encode();
                 let opa = a.encode();
                 let opb = b.encode();
                 let opc = c.encode();
-                B::<28>::concat(opop, B::<24>::concat(opa, B::<16>::concat(opb, opc)))
+                opop.concat::<8, 12>(opa).concat::<8, 20>(opb).concat(opc)
             }
         }
     }

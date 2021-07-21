@@ -29,10 +29,10 @@ impl<const N: usize> From<u32> for B<N> {
 }
 
 impl<const N: usize> B<N> {
-    pub fn concat<const J: usize, const K: usize>(a: B<J>, b: B<K>) -> B<N> {
-        assert!(N <= 32);
-        assert_eq!(J + K, N);
-        Self::from_u32((a.0 << K) | b.0)
+    pub fn concat<const J: usize, const K: usize>(self, suffix: B<J>) -> B<K> {
+        assert!(K <= 32);
+        assert_eq!(N + J, K);
+        B::<K>::from_u32((self.0 << J) | suffix.0)
     }
 
     pub fn split<const J: usize, const K: usize>(self) -> (B<J>, B<K>) {

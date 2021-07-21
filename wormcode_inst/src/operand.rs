@@ -21,7 +21,7 @@ impl Operand {
 
 impl Encode<8> for Operand {
     fn encode(self) -> B<8> {
-        B::<8>::concat(B::<2>::from(self.mode), self.scalar)
+        B::<2>::from(self.mode).concat(self.scalar)
     }
 }
 
