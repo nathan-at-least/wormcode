@@ -1,4 +1,4 @@
-use super::B;
+use super::{DecodeResult, B};
 
 macro_rules! from_into_tests {
     ( $vname:ident, $v:expr ) => {
@@ -62,10 +62,37 @@ fn split_2_3() {
 }
 
 #[test]
-fn split_2_5_3() {
+fn split3_2_5_3() {
     let x = B::<10>::from(0x316);
     let (a, b, c) = x.split3::<2, 5, 3>();
     assert_eq!(u32::from(a), 0x3);
     assert_eq!(u32::from(b), 0x2);
     assert_eq!(u32::from(c), 0x6);
+}
+
+use crate::Decode;
+
+#[derive(Debug, PartialEq, Eq)]
+struct U32w(u32);
+
+impl Decode<3> for U32w {
+    fn decode_option(b: B<3>) -> Option<U32w> {
+        Some(U32w(u32::from(b)))
+    }
+}
+
+#[test]
+fn split_decode_3_3() -> DecodeResult<()> {
+    let src = B::<6>::from(0x2a);
+    let res: (U32w, U32w) = src.split_decode()?;
+    assert_eq!(res, (U32w(0x5), U32w(0x2)));
+    Ok(())
+}
+
+#[test]
+fn split3_decode_3_3_3() -> DecodeResult<()> {
+    let src = B::<9>::from(0xba);
+    let res: (U32w, U32w, U32w) = src.split3_decode()?;
+    assert_eq!(res, (U32w(0x2), U32w(0x7), U32w(0x2)));
+    Ok(())
 }

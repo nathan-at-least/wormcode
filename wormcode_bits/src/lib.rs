@@ -35,6 +35,32 @@ impl<const N: usize> B<N> {
         B::<K>::from_u32((self.0 << J) | suffix.0)
     }
 
+    pub fn split_decode<X, Y, const J: usize, const K: usize>(self) -> DecodeResult<(X, Y)>
+    where
+        X: Decode<J>,
+        Y: Decode<K>,
+    {
+        let (a, b) = self.split();
+        let x = X::decode(a)?;
+        let y = Y::decode(b)?;
+        Ok((x, y))
+    }
+
+    pub fn split3_decode<X, Y, Z, const J: usize, const K: usize, const L: usize>(
+        self,
+    ) -> DecodeResult<(X, Y, Z)>
+    where
+        X: Decode<J>,
+        Y: Decode<K>,
+        Z: Decode<L>,
+    {
+        let (a, b, c) = self.split3();
+        let x = X::decode(a)?;
+        let y = Y::decode(b)?;
+        let z = Z::decode(c)?;
+        Ok((x, y, z))
+    }
+
     pub fn split<const J: usize, const K: usize>(self) -> (B<J>, B<K>) {
         assert!(N <= 32);
         assert_eq!(J + K, N);

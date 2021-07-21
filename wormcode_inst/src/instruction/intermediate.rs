@@ -100,26 +100,18 @@ impl Decode<28> for Intermediate {
         let (spine, guts) = src.split::<4, 24>();
 
         if let Some(opc3) = OpCode3::decode_option(spine) {
-            let (a, b, c) = guts.split3::<8, 8, 8>();
-            let opa = Operand::decode(a)?;
-            let opb = Operand::decode(b)?;
-            let opc = Operand::decode(c)?;
-            Ok(Trinary(opc3, opa, opb, opc))
+            let (a, b, c): (Operand, Operand, Operand) = guts.split3_decode()?;
+            Ok(Trinary(opc3, a, b, c))
         } else {
             match u32::from(spine) {
                 0 => Ok(Data(guts)),
                 1 => OpCode0::decode(guts).map(Nullary),
                 2 => {
-                    let (boc, bop) = guts.split::<16, 8>();
-                    let oc = OpCode1::decode(boc)?;
-                    let op = Operand::decode(bop)?;
+                    let (oc, op): (OpCode1, Operand) = guts.split_decode()?;
                     Ok(Unary(oc, op))
                 }
                 3 => {
-                    let (boc, bopa, bopb) = guts.split3::<8, 8, 8>();
-                    let oc = OpCode2::decode(boc)?;
-                    let opa = Operand::decode(bopa)?;
-                    let opb = Operand::decode(bopb)?;
+                    let (oc, opa, opb) = guts.split3_decode()?;
                     Ok(Binary(oc, opa, opb))
                 }
                 _ => unreachable!(),
