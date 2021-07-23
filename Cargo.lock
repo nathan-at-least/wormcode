@@ -153,3 +153,10 @@ dependencies = [
  "test-case",
  "wormcode_bits",
 ]
+
+[[package]]
+name = "wormcode_space"
+version = "0.1.0"
+dependencies = [
+ "test-case",
+]
