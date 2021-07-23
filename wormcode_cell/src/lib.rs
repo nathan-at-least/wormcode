@@ -1,10 +1,5 @@
+mod bitpairfields;
 mod cell;
-mod direction;
-mod physics;
 
-#[cfg(test)]
-mod tests;
-
+pub use bitpairfields::{Direction, Physics};
 pub use cell::Cell;
-pub use direction::Direction;
-pub use physics::Physics;
