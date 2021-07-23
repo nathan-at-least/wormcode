@@ -139,6 +139,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "wormcode_cell"
+version = "0.1.0"
+dependencies = [
+ "test-case",
+ "wormcode_bits",
+]
+
+[[package]]
 name = "wormcode_inst"
 version = "0.1.0"
 dependencies = [

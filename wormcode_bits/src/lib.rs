@@ -4,7 +4,7 @@ mod debug;
 #[cfg(test)]
 mod tests;
 
-pub use codec::{Decode, DecodeError, DecodeResult, Encode};
+pub use codec::{Decode, DecodeError, DecodeExact, DecodeResult, Encode};
 
 /// A collection of N contiguous bits. N <= 32.
 #[derive(Copy, Clone, PartialEq, Eq)]

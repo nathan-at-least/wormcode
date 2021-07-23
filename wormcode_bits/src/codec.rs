@@ -1,5 +1,13 @@
 use crate::B;
 
+pub trait Encode<const N: usize> {
+    fn encode(self) -> B<N>;
+}
+
+pub trait DecodeExact<const N: usize>: Sized {
+    fn decode_exact(b: B<N>) -> Self;
+}
+
 #[derive(Debug)]
 pub struct DecodeError {
     typename: &'static str,
@@ -7,10 +15,6 @@ pub struct DecodeError {
 }
 
 pub type DecodeResult<T> = Result<T, DecodeError>;
-
-pub trait Encode<const N: usize> {
-    fn encode(self) -> B<N>;
-}
 
 pub trait Decode<const N: usize>: Sized {
     fn decode(b: B<N>) -> DecodeResult<Self> {
@@ -23,5 +27,26 @@ pub trait Decode<const N: usize>: Sized {
     // Any Self that implements only this will be the `src` of the DecodeError:
     fn decode_option(b: B<N>) -> Option<Self> {
         Self::decode(b).ok()
+    }
+}
+
+impl<const N: usize> Encode<N> for B<N> {
+    fn encode(self) -> B<N> {
+        self
+    }
+}
+
+impl<T, const N: usize> Decode<N> for T
+where
+    T: DecodeExact<N>,
+{
+    fn decode_option(b: B<N>) -> Option<Self> {
+        Some(Self::decode_exact(b))
+    }
+}
+
+impl<const N: usize> Decode<N> for B<N> {
+    fn decode_option(src: B<N>) -> Option<B<N>> {
+        Some(src)
     }
 }
