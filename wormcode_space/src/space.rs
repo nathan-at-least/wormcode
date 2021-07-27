@@ -19,6 +19,16 @@ impl<T> Space<T> {
         self.bottomright.y
     }
 
+    pub fn map_cells<F, U>(mut self, f: F) -> Space<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        Space {
+            bottomright: self.bottomright,
+            v: self.v.drain(..).map(f).collect(),
+        }
+    }
+
     fn coords_ix(&self, c: Coords) -> usize {
         use std::convert::TryInto;
 

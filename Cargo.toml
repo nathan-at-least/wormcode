@@ -3,6 +3,10 @@ members = [
     "wormcode_asm",
     "wormcode_bits",
     "wormcode_cell",
+    "wormcode_console",
     "wormcode_inst",
+    "wormcode_prng",
+    "wormcode_sim",
     "wormcode_space",
+    "wormcode_ui",
 ]
