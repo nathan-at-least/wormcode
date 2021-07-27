@@ -1,27 +1,38 @@
 use crate::{Direction, Physics};
-use wormcode_bits::{Decode, DecodeResult, Encode, B};
+use wormcode_bits::{DecodeExact, Encode, B};
 
-#[derive(Debug)]
-pub struct Cell {
-    physics: Physics,
-    tailward: Direction,
-    composition: B<28>,
+#[derive(Copy, Clone, Debug)]
+pub struct Cell(B<32>);
+
+impl Cell {
+    pub fn physics(self) -> Physics {
+        let (p, _, _) = self.fields();
+        p
+    }
+
+    pub fn direction(self) -> Direction {
+        let (_, d, _) = self.fields();
+        d
+    }
+
+    pub fn body(self) -> B<28> {
+        let (_, _, b) = self.fields();
+        b
+    }
+
+    pub fn fields(self) -> (Physics, Direction, B<28>) {
+        self.0.split3_decode_exact()
+    }
 }
 
-impl Decode<32> for Cell {
-    fn decode(b: B<32>) -> DecodeResult<Cell> {
-        let (physics, tailward, composition) = b.split3_decode()?;
-        Ok(Cell {
-            physics,
-            tailward,
-            composition,
-        })
+impl DecodeExact<32> for Cell {
+    fn decode_exact(b: B<32>) -> Cell {
+        Cell(b)
     }
 }
 
 impl Encode<32> for Cell {
     fn encode(self) -> B<32> {
-        let physbits: B<4> = self.physics.encode().concat(self.tailward.encode());
-        physbits.concat(self.composition)
+        self.0
     }
 }

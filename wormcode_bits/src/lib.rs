@@ -61,6 +61,18 @@ impl<const N: usize> B<N> {
         Ok((x, y, z))
     }
 
+    pub fn split3_decode_exact<X, Y, Z, const J: usize, const K: usize, const L: usize>(
+        self,
+    ) -> (X, Y, Z)
+    where
+        X: DecodeExact<J>,
+        Y: DecodeExact<K>,
+        Z: DecodeExact<L>,
+    {
+        let (a, b, c) = self.split3();
+        (X::decode_exact(a), Y::decode_exact(b), Z::decode_exact(c))
+    }
+
     pub fn split<const J: usize, const K: usize>(self) -> (B<J>, B<K>) {
         assert!(N <= 32);
         assert_eq!(J + K, N);

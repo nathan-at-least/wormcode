@@ -45,8 +45,8 @@ where
     }
 }
 
-impl<const N: usize> Decode<N> for B<N> {
-    fn decode_option(src: B<N>) -> Option<B<N>> {
-        Some(src)
+impl<const N: usize> DecodeExact<N> for B<N> {
+    fn decode_exact(src: B<N>) -> B<N> {
+        src
     }
 }
