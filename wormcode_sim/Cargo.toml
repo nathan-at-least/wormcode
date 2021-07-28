@@ -20,6 +20,3 @@ path = "../wormcode_prng"
 
 [dependencies.wormcode_space]
 path = "../wormcode_space"
-
-[dependencies.wormcode_ui]
-path = "../wormcode_ui"

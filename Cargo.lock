@@ -245,7 +245,6 @@ dependencies = [
  "wormcode_cell",
  "wormcode_prng",
  "wormcode_space",
- "wormcode_ui",
 ]
 
 [[package]]

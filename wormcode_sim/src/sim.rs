@@ -3,23 +3,21 @@ use wormcode_asm::{parse_path, Assemblage, ParsePathResult};
 use wormcode_cell::Cell;
 use wormcode_prng::Prng;
 use wormcode_space::{Coords, Space};
-use wormcode_ui::UI;
 
-pub struct Sim<U> {
-    ui: U,
+pub struct Sim {
     prng: Prng,
     space: Space<Cell>,
 }
 
-impl<U> Sim<U> {
-    pub fn init<'a, I>(ui: U, seed: u64, size: Coords, wormsrcs: I) -> ParsePathResult<Self>
+impl Sim {
+    pub fn init<'a, I>(seed: u64, size: Coords, wormsrcs: I) -> ParsePathResult<Self>
     where
         I: IntoIterator<Item = &'a Path>,
     {
         let mut prng = Prng::new(seed);
         let wormcodes = assemble_worms(wormsrcs)?;
         let space = layout(&mut prng, size, wormcodes);
-        Ok(Sim { ui, prng, space })
+        Ok(Sim { prng, space })
     }
 }
 
@@ -39,13 +37,13 @@ fn layout(prng: &mut Prng, size: Coords, wormcodes: Vec<Assemblage>) -> Space<Ce
     let mut canvas: Space<Option<Cell>> = Space::new_empty(size);
 
     for wormcode in wormcodes {
-        layout_wormcode(&mut canvas, wormcode);
+        layout_wormcode(prng, &mut canvas, wormcode);
     }
 
     canvas.map_cells(|oc| oc.unwrap_or(gen_cell(prng)))
 }
 
-fn layout_wormcode(canvas: &mut Space<Option<Cell>>, wormcode: Assemblage) {
+fn layout_wormcode(prng: &mut Prng, canvas: &mut Space<Option<Cell>>, wormcode: Assemblage) {
     todo!();
 }
 
