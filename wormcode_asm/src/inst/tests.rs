@@ -1,5 +1,5 @@
-use crate::error::DatumParseError::Overflow as DPEOverflow;
-use crate::{ParseError::MalformedDatum, ParseResult};
+use crate::error::DatumAssembleError::Overflow as DPEOverflow;
+use crate::{AssembleError::MalformedDatum, AssembleResult};
 use test_case::test_case;
 use wormcode_bits::{Overflow, B};
 use wormcode_inst::{
@@ -43,6 +43,6 @@ use wormcode_inst::{
         )
     )
 )]
-fn parse_instruction(src: &str) -> ParseResult<Instruction> {
-    crate::parse_instruction(src)
+fn assemble_instruction(src: &str) -> AssembleResult<Instruction> {
+    crate::assemble_instruction(src)
 }

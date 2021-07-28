@@ -1,68 +1,68 @@
-mod parseb;
+mod bits;
 mod tokenstream;
 
 #[cfg(test)]
 mod tests;
 
-use self::parseb::parse_b;
+use self::bits::assemble_bits;
 use self::tokenstream::TokenStream;
-use crate::{ParseError, ParseResult};
+use crate::{AssembleError, AssembleResult};
 use wormcode_bits::B;
 use wormcode_inst::{Instruction, Operand};
 
-pub fn parse_instruction(line: &str) -> ParseResult<Instruction> {
+pub fn assemble_instruction(line: &str) -> AssembleResult<Instruction> {
     let line = trim_comment(line);
-    InstructionParser::from_line(line).parse()
+    InstructionAssembler::from_line(line).assemble()
 }
 
-struct InstructionParser<'a>(TokenStream<'a>);
+struct InstructionAssembler<'a>(TokenStream<'a>);
 
-impl<'a> InstructionParser<'a> {
-    fn from_line(line: &str) -> InstructionParser {
-        InstructionParser(TokenStream::from_line(line))
+impl<'a> InstructionAssembler<'a> {
+    fn from_line(line: &str) -> InstructionAssembler {
+        InstructionAssembler(TokenStream::from_line(line))
     }
 
-    fn parse(mut self) -> ParseResult<Instruction> {
+    fn assemble(mut self) -> AssembleResult<Instruction> {
         let mnemonic = self.0.require_token("mnemonic")?;
-        let inst = self.parse_mnemonic(mnemonic)?;
+        let inst = self.assemble_mnemonic(mnemonic)?;
         self.0.finish()?;
         Ok(inst)
     }
 
-    fn parse_mnemonic(&mut self, mnemonic: &str) -> ParseResult<Instruction> {
+    fn assemble_mnemonic(&mut self, mnemonic: &str) -> AssembleResult<Instruction> {
         use Instruction::*;
 
         match mnemonic {
-            "data" => parse_b(self.0.require_token("datum")?).map(Data),
+            "data" => assemble_bits(self.0.require_token("datum")?).map(Data),
             "nop" => Ok(Nop),
             "step" => {
-                let a = self.parse_operand()?;
+                let a = self.assemble_operand()?;
                 Ok(Step(a))
             }
             "inc" => {
-                let a = self.parse_operand()?;
-                let b = self.parse_operand()?;
+                let a = self.assemble_operand()?;
+                let b = self.assemble_operand()?;
                 Ok(Inc(a, b))
             }
             "memcpy" => {
-                let a = self.parse_operand()?;
-                let b = self.parse_operand()?;
-                let c = self.parse_operand()?;
+                let a = self.assemble_operand()?;
+                let b = self.assemble_operand()?;
+                let c = self.assemble_operand()?;
                 Ok(MemCpy(a, b, c))
             }
-            other => Err(ParseError::UnknownMnemonic(String::from(other))),
+            other => Err(AssembleError::UnknownMnemonic(String::from(other))),
         }
     }
 
-    fn parse_operand(&mut self) -> ParseResult<Operand> {
+    fn assemble_operand(&mut self) -> AssembleResult<Operand> {
         use wormcode_inst::Mode::*;
 
-        fn unwrap_brackets(s: &str) -> ParseResult<Option<&str>> {
+        fn unwrap_brackets(s: &str) -> AssembleResult<Option<&str>> {
             if let Some(t) = s.strip_prefix('[') {
                 if let Some(u) = t.strip_suffix(']') {
                     Ok(Some(u))
                 } else {
-                    Err(ParseError::Expected("close bracket ']'"))
+                    Err(AssembleError::Expected("close bracket ']'"))
                 }
             } else {
                 Ok(None)
@@ -72,14 +72,14 @@ impl<'a> InstructionParser<'a> {
         let s = self.0.require_token("operand")?;
         if let Some(t) = unwrap_brackets(s)? {
             if let Some(u) = unwrap_brackets(t)? {
-                let b: B<6> = parse_b(u)?;
+                let b: B<6> = assemble_bits(u)?;
                 Ok(Operand::new(Indirect, b))
             } else {
-                let b: B<6> = parse_b(t)?;
+                let b: B<6> = assemble_bits(t)?;
                 Ok(Operand::new(Direct, b))
             }
         } else {
-            let b: B<6> = parse_b(s)?;
+            let b: B<6> = assemble_bits(s)?;
             Ok(Operand::new(Literal, b))
         }
     }

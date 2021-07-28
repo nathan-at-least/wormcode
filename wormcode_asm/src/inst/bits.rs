@@ -1,13 +1,13 @@
-use crate::{error::DatumParseError, ParseResult};
+use crate::{error::DatumAssembleError, AssembleResult};
 use wormcode_bits::B;
 
-pub fn parse_b<const N: usize>(s: &str) -> ParseResult<B<N>> {
-    use crate::ParseError::MalformedDatum;
+pub fn assemble_bits<const N: usize>(s: &str) -> AssembleResult<B<N>> {
+    use crate::AssembleError::MalformedDatum;
 
-    parse_b_inner(s).map_err(MalformedDatum)
+    assemble_bits_inner(s).map_err(MalformedDatum)
 }
 
-fn parse_b_inner<const N: usize>(s: &str) -> Result<B<N>, DatumParseError> {
+fn assemble_bits_inner<const N: usize>(s: &str) -> Result<B<N>, DatumAssembleError> {
     use std::str::FromStr;
 
     let u = if let Some(t) = s.strip_prefix("0x") {
@@ -23,8 +23,8 @@ fn parse_b_inner<const N: usize>(s: &str) -> Result<B<N>, DatumParseError> {
 #[cfg(test)]
 mod tests {
     use super::{
-        parse_b_inner,
-        DatumParseError::{self, Overflow},
+        assemble_bits_inner,
+        DatumAssembleError::{self, Overflow},
     };
     use test_case::test_case;
     use wormcode_bits::Overflow as BO;
@@ -35,7 +35,7 @@ mod tests {
     #[test_case("5" => Ok(B::from(5)))]
     #[test_case("0x5" => Ok(B::from(5)))]
     #[test_case("9" => Err(Overflow(BO { bitsize: 3, input: 9 })))]
-    fn test_parse(s: &str) -> Result<B<3>, DatumParseError> {
-        parse_b_inner(s)
+    fn test_assemble(s: &str) -> Result<B<3>, DatumAssembleError> {
+        assemble_bits_inner(s)
     }
 }

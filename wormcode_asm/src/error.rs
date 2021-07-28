@@ -1,23 +1,23 @@
 #[derive(Debug, PartialEq, Eq)]
-pub enum ParseError {
+pub enum AssembleError {
     Expected(&'static str),
     Unexpected(String),
     UnknownMnemonic(String),
-    MalformedDatum(DatumParseError),
+    MalformedDatum(DatumAssembleError),
 }
 
-pub type ParseResult<T> = Result<T, ParseError>;
+pub type AssembleResult<T> = Result<T, AssembleError>;
 
 #[derive(Debug, PartialEq, Eq, derive_more::From)]
-pub enum DatumParseError {
+pub enum DatumAssembleError {
     Format(std::num::ParseIntError),
     Overflow(wormcode_bits::Overflow),
 }
 
 #[derive(Debug, derive_more::From)]
-pub enum ParsePathError {
+pub enum AssemblePathError {
     IO(std::io::Error),
-    Parse(ParseError),
+    Assemble(AssembleError),
 }
 
-pub type ParsePathResult<T> = Result<T, ParsePathError>;
+pub type AssemblePathResult<T> = Result<T, AssemblePathError>;

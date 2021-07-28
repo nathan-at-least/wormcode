@@ -1,5 +1,5 @@
 use std::path::Path;
-use wormcode_asm::{parse_path, Assemblage, ParsePathResult};
+use wormcode_asm::{assemble_path, Assemblage, AssemblePathResult};
 use wormcode_cell::Cell;
 use wormcode_prng::Prng;
 use wormcode_space::{Coords, Space};
@@ -10,7 +10,7 @@ pub struct Sim {
 }
 
 impl Sim {
-    pub fn init<'a, I>(seed: u64, size: Coords, wormsrcs: I) -> ParsePathResult<Self>
+    pub fn init<'a, I>(seed: u64, size: Coords, wormsrcs: I) -> AssemblePathResult<Self>
     where
         I: IntoIterator<Item = &'a Path>,
     {
@@ -21,13 +21,13 @@ impl Sim {
     }
 }
 
-fn assemble_worms<'a, I>(wormsrcs: I) -> ParsePathResult<Vec<Assemblage>>
+fn assemble_worms<'a, I>(wormsrcs: I) -> AssemblePathResult<Vec<Assemblage>>
 where
     I: IntoIterator<Item = &'a Path>,
 {
     let mut wormcodes = vec![];
     for wormsrc in wormsrcs.into_iter() {
-        wormcodes.push(parse_path(wormsrc)?);
+        wormcodes.push(assemble_path(wormsrc)?);
     }
 
     Ok(wormcodes)

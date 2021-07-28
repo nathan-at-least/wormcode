@@ -1,4 +1,3 @@
-// todo: rename parse -> assemble
 pub mod error;
 
 mod inst;
@@ -6,29 +5,29 @@ mod inst;
 #[cfg(test)]
 mod tests;
 
-pub use error::{ParseError, ParsePathError, ParsePathResult, ParseResult};
-pub use inst::parse_instruction;
+pub use error::{AssembleError, AssemblePathError, AssemblePathResult, AssembleResult};
+pub use inst::assemble_instruction;
 
 use std::path::Path;
 use wormcode_inst::Instruction;
 
 pub type Assemblage = Vec<Instruction>;
 
-pub fn parse_path(p: &Path) -> ParsePathResult<Assemblage> {
+pub fn assemble_path(p: &Path) -> AssemblePathResult<Assemblage> {
     use std::io::Read;
 
     let mut src = String::new();
     let mut f = std::fs::File::open(p)?;
     f.read_to_string(&mut src)?;
-    let worm = parse(&src)?;
+    let worm = assemble(&src)?;
     Ok(worm)
 }
 
-pub fn parse(src: &str) -> ParseResult<Assemblage> {
+pub fn assemble(src: &str) -> AssembleResult<Assemblage> {
     let mut insts = vec![];
 
     for line in src.lines() {
-        insts.push(parse_instruction(line)?);
+        insts.push(assemble_instruction(line)?);
     }
 
     Ok(insts)

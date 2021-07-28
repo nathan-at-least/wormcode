@@ -1,4 +1,4 @@
-use crate::{parse, ParseResult};
+use crate::{assemble, AssembleResult};
 use test_case::test_case;
 use wormcode_bits::B;
 use wormcode_inst::{
@@ -18,6 +18,6 @@ use wormcode_inst::{
             )
     ])
 )]
-fn test_parse(s: &str) -> ParseResult<Vec<Instruction>> {
-    parse(s)
+fn test_assemble(s: &str) -> AssembleResult<Vec<Instruction>> {
+    assemble(s)
 }
