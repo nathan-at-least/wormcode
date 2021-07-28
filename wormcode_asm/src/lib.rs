@@ -1,14 +1,14 @@
 // todo: rename parse -> assemble
 mod error;
+mod inst;
 mod parseb;
-mod parseinst;
 
 #[cfg(test)]
 mod tests;
 
 pub use error::{ParseError, ParsePathError, ParsePathResult, ParseResult};
+pub use inst::parse_instruction;
 pub use parseb::DatumParseError;
-pub use parseinst::parse_instruction;
 
 use std::path::Path;
 use wormcode_inst::Instruction;
