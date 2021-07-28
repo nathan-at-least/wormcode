@@ -1,4 +1,4 @@
-use crate::DatumParseError::Overflow as DPEOverflow;
+use crate::error::DatumParseError::Overflow as DPEOverflow;
 use crate::{ParseError::MalformedDatum, ParseResult};
 use test_case::test_case;
 use wormcode_bits::{Overflow, B};

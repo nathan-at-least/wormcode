@@ -1,5 +1,3 @@
-pub use crate::DatumParseError;
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum ParseError {
     Expected(&'static str),
@@ -9,6 +7,12 @@ pub enum ParseError {
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;
+
+#[derive(Debug, PartialEq, Eq, derive_more::From)]
+pub enum DatumParseError {
+    Format(std::num::ParseIntError),
+    Overflow(wormcode_bits::Overflow),
+}
 
 #[derive(Debug, derive_more::From)]
 pub enum ParsePathError {

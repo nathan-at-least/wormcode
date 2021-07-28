@@ -1,10 +1,12 @@
+mod parseb;
 mod tokenstream;
 
 #[cfg(test)]
 mod tests;
 
+use self::parseb::parse_b;
 use self::tokenstream::TokenStream;
-use crate::{parseb::parse_b, ParseError, ParseResult};
+use crate::{ParseError, ParseResult};
 use wormcode_bits::B;
 use wormcode_inst::{Instruction, Operand};
 

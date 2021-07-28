@@ -1,11 +1,5 @@
-use crate::ParseResult;
+use crate::{error::DatumParseError, ParseResult};
 use wormcode_bits::B;
-
-#[derive(Debug, PartialEq, Eq, derive_more::From)]
-pub enum DatumParseError {
-    Format(std::num::ParseIntError),
-    Overflow(wormcode_bits::Overflow),
-}
 
 pub fn parse_b<const N: usize>(s: &str) -> ParseResult<B<N>> {
     use crate::ParseError::MalformedDatum;
